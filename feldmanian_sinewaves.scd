@@ -8,9 +8,10 @@
 
 
 (//para precargar todo lo necesario
+//~fundamental :: Number
 ~fundamental = 20;
 
-(
+//~harm_pair_list :: [Int, Int]
 ~harm_pair_list = [
 	[9,10],
 	[11,12],
@@ -18,20 +19,18 @@
 	[15,16],
 	[17,19],
 	[21, 23]
-]
-);
+];
 
+//~harm_pair  :: Number -> [Int, Int] -> [Number, Number]
 ~harm_pair = { |fundamental, pair| pair.collect({|f| f * fundamental})};
 
-~harm_pair1 = ~harm_pair.(~fundamental, _);
-
 //~freq_pair_list :: HarmPairs[[harm1, harm2]] -> FreqPairs[[freq1, freq2]]
-~make_freq_pairs = _.collect(~harm_pair1);
+~make_freq_pairs = _.collect(~harm_pair.(~fundamental, _));
 
 //~freq_pair_list :: FreqPairs[[freq1, freq2]]
 ~freq_pair_list = ~make_freq_pairs.(~harm_pair_list);
 
-(//~make_synth_pair :: [freq1, freq2] -> [Synth, Synth]
+//~make_synth_pair :: [freq1, freq2] -> [Synth, Synth]
 ~make_synth_pair = {
 	|freq_pair|
 	{
@@ -46,8 +45,7 @@
 			LFNoise2.kr(0.8, 100)*0.01
 		)]
 	}
-}
-);
+};
 
 //~make_synth_pair :: [[freq1, freq2]] -> [[Synth, Synth]]
 ~make_synth_pairs = _.collect(~make_synth_pair);
@@ -60,7 +58,7 @@
 
 
 //activación y desactivación de los sintes
-(
+
 ~play_synth = {
 	|ss|
 	var len, selected, playing;
@@ -69,10 +67,8 @@
 	playing = selected.play(fadeTime:6);
 	~active_synths.add(playing);
 	~active_synths.size.postln;
-}
-);
+};
 
-(
 ~stop_synth = {
 	|active_ss|
 	var len, stopped;
@@ -84,15 +80,13 @@
 		stopped.release;
 	}, {});
 	~active_synths.size.postln;
-}
-);
+};
 
 
 //manejo del tiempo
 ~continue = true;
 ~dont_continue = {~continue = false};
 
-(
 ~automatic_playing = {
 	|time|
 	if(~continue == true,
@@ -112,8 +106,7 @@
 			"recursive calls are disabled".postln
 		}
 	)
-}
-);
+};
 
 )
 
