@@ -1,13 +1,77 @@
-~automatic_playing.(rrand(4.0,5));
+/*
+* feldmanian_sinewaves
+*
+*
+*
+* Diego Villaseñor
+*
+
+* Volos-Athens, Greece, June 2017
+*
+* v.1.0.1
+*/
+
+
+//controles
+~automatic_playing.(4);
 
 ~active_synths.postln
 ~play_synth.(~ss);
 ~stop_synth.(~active_synths);
+~do_continue.();
 ~dont_continue.();
 
 
+~ss = ~feldmanian_sinewaves.(
+	10,
+	[
+		[9,10],
+		[11,12],
+		[13,14],
+		[15,16],
+		[17,19],
+		[21, 23],
+		[29, 31],
+		[33, 37],
+		[41, 43],
+		[47, 49]
+	]
+);
+
+~feldmanian_sinewaves = {|fundamental, harmonic_pair_list|
+
+	//harm_pair  :: Number -> [Int, Int] -> [Number, Number]
+	var harm_pair = { |fundamental, pair| pair.collect({|int| int * fundamental})};
+
+	//freq_pair_list :: HarmPairs [[harm1, harm2]] -> FreqPairs[[freq1, freq2]]
+	var make_freq_pairs = _.collect(harm_pair.(fundamental, _));
+
+	//freq_pair_list :: FreqPairs [[freq1, freq2]]
+	var freq_pair_list = make_freq_pairs.(harmonic_pair_list);
+
+	//make_synth_pair :: [freq1, freq2] -> [Synth, Synth]
+	var make_synth_pair = {
+		|freq_pair|
+		{
+			[SinOsc.ar(
+				freq_pair[0],
+				LFNoise2.kr(0.001, 10)*0.00001,
+				LFNoise2.kr(0.5, 100)*0.01
+			),
+			SinOsc.ar(
+				freq_pair[1],
+				LFNoise2.kr(0.001, 10)*0.00001,
+				LFNoise2.kr(0.8, 100)*0.01
+			)]
+		}
+	};
+
+	//[FSinewaves [Synth, Synth]]
+	freq_pair_list.collect(make_synth_pair);
+}
 
 (//para precargar todo lo necesario
+s.boot;
 //~fundamental :: Number
 ~fundamental = 20;
 
@@ -18,16 +82,20 @@
 	[13,14],
 	[15,16],
 	[17,19],
-	[21, 23]
+	[21, 23],
+	[29, 31],
+	[33, 37],
+	[41, 43],
+	[47, 49],
 ];
 
 //~harm_pair  :: Number -> [Int, Int] -> [Number, Number]
-~harm_pair = { |fundamental, pair| pair.collect({|f| f * fundamental})};
+~harm_pair = { |fundamental, pair| pair.collect({|int| int * fundamental})};
 
-//~freq_pair_list :: HarmPairs[[harm1, harm2]] -> FreqPairs[[freq1, freq2]]
+//~freq_pair_list :: HarmPairs [[harm1, harm2]] -> FreqPairs[[freq1, freq2]]
 ~make_freq_pairs = _.collect(~harm_pair.(~fundamental, _));
 
-//~freq_pair_list :: FreqPairs[[freq1, freq2]]
+//~freq_pair_list :: FreqPairs [[freq1, freq2]]
 ~freq_pair_list = ~make_freq_pairs.(~harm_pair_list);
 
 //~make_synth_pair :: [freq1, freq2] -> [Synth, Synth]
@@ -51,9 +119,9 @@
 ~make_synth_pairs = _.collect(~make_synth_pair);
 
 //~ss :: [[Synth, Synth]]
-~ss = ~make_synth_pairs.(~freq_pair_list);
+// ~ss = ~make_synth_pairs.(~freq_pair_list);
 
-//~active_synths :: [[Synth, Synth]]
+//~active_synths :: [ Synth [Synth, Synth] ]
 ~active_synths = List[];
 
 
@@ -85,6 +153,9 @@
 
 //manejo del tiempo
 ~continue = true;
+
+//continuar o no la reproducción automática
+~do_continue = {~continue = true};
 ~dont_continue = {~continue = false};
 
 ~automatic_playing = {
@@ -108,5 +179,6 @@
 	)
 };
 
-)
 
+
+)
