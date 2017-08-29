@@ -8,7 +8,7 @@
 *
 * Volos-Athens, Greece, June 2017
 *
-* v.1.1.1
+* v.1.1.2
 */
 
 
@@ -48,10 +48,11 @@
 s.boot;
 
 (//paso 1. precargar todo lo necesario
+//type FSinewaves = [Synth, Synth]
 
-//~active_synths :: [ Synth [Synth, Synth] ]
+//~active_synths :: [ FSinewaves ]
 ~active_synths = List[];
-//~ss :: [ Synth [Synth, Synth] ]
+//~ss :: [ FSinewaves ]
 ~ss = List[];
 
 ~feldmanian_sinewaves = {|fundamental, harmonic_pair_list|
@@ -82,7 +83,7 @@ s.boot;
 		}
 	};
 
-	//[FSinewaves [Synth, Synth]]
+	//[FSinewaves]
 	freq_pair_list.collect(make_synth_pair);
 };
 
@@ -105,7 +106,6 @@ s.boot;
 
 	len = active_ss.size;
 	if(len > 0, {
-		"borrando".postln;
 		stopped = active_ss.removeAt(len.rand);
 		stopped.release;
 	}, {});
