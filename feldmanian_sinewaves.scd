@@ -5,10 +5,10 @@
 *
 * Diego Villaseñor
 *
-
+*
 * Volos-Athens, Greece, June 2017
 *
-* v.1.1.0
+* v.1.1.1
 */
 
 
@@ -17,7 +17,6 @@
 ~active_synths.postln;
 ~play_synth.(~ss);
 ~stop_synth.(~active_synths);
-~do_continue.();
 ~dont_continue.();
 
 
@@ -45,11 +44,15 @@
 )
 
 
-(//paso 1. precargar todo lo necesario
+/*paso 0. iniciar servidor*/
 s.boot;
+
+(//paso 1. precargar todo lo necesario
 
 //~active_synths :: [ Synth [Synth, Synth] ]
 ~active_synths = List[];
+//~ss :: [ Synth [Synth, Synth] ]
+~ss = List[];
 
 ~feldmanian_sinewaves = {|fundamental, harmonic_pair_list|
 
