@@ -8,22 +8,27 @@
 
 * Volos-Athens, Greece, June 2017
 *
-* v.1.0.1
+* v.1.1.0
 */
 
 
-//controles
-~automatic_playing.(4);
 
-~active_synths.postln
+//controles
+~active_synths.postln;
 ~play_synth.(~ss);
 ~stop_synth.(~active_synths);
 ~do_continue.();
 ~dont_continue.();
 
 
+(//paso 3. iniciar reproducción
+~automatic_playing.(4);
+)
+
+
+(//paso 2. generar los sonidos
 ~ss = ~feldmanian_sinewaves.(
-	10,
+	12.54,
 	[
 		[9,10],
 		[11,12],
@@ -37,6 +42,14 @@
 		[47, 49]
 	]
 );
+)
+
+
+(//paso 1. precargar todo lo necesario
+s.boot;
+
+//~active_synths :: [ Synth [Synth, Synth] ]
+~active_synths = List[];
 
 ~feldmanian_sinewaves = {|fundamental, harmonic_pair_list|
 
@@ -68,61 +81,7 @@
 
 	//[FSinewaves [Synth, Synth]]
 	freq_pair_list.collect(make_synth_pair);
-}
-
-(//para precargar todo lo necesario
-s.boot;
-//~fundamental :: Number
-~fundamental = 20;
-
-//~harm_pair_list :: [Int, Int]
-~harm_pair_list = [
-	[9,10],
-	[11,12],
-	[13,14],
-	[15,16],
-	[17,19],
-	[21, 23],
-	[29, 31],
-	[33, 37],
-	[41, 43],
-	[47, 49],
-];
-
-//~harm_pair  :: Number -> [Int, Int] -> [Number, Number]
-~harm_pair = { |fundamental, pair| pair.collect({|int| int * fundamental})};
-
-//~freq_pair_list :: HarmPairs [[harm1, harm2]] -> FreqPairs[[freq1, freq2]]
-~make_freq_pairs = _.collect(~harm_pair.(~fundamental, _));
-
-//~freq_pair_list :: FreqPairs [[freq1, freq2]]
-~freq_pair_list = ~make_freq_pairs.(~harm_pair_list);
-
-//~make_synth_pair :: [freq1, freq2] -> [Synth, Synth]
-~make_synth_pair = {
-	|freq_pair|
-	{
-		[SinOsc.ar(
-			freq_pair[0],
-			LFNoise2.kr(0.001, 10)*0.00001,
-			LFNoise2.kr(0.5, 100)*0.01
-		),
-		SinOsc.ar(
-			freq_pair[1],
-			LFNoise2.kr(0.001, 10)*0.00001,
-			LFNoise2.kr(0.8, 100)*0.01
-		)]
-	}
 };
-
-//~make_synth_pair :: [[freq1, freq2]] -> [[Synth, Synth]]
-~make_synth_pairs = _.collect(~make_synth_pair);
-
-//~ss :: [[Synth, Synth]]
-// ~ss = ~make_synth_pairs.(~freq_pair_list);
-
-//~active_synths :: [ Synth [Synth, Synth] ]
-~active_synths = List[];
 
 
 //activación y desactivación de los sintes
